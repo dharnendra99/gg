@@ -27,7 +27,7 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <BrowserRouter basename="/gg">
+    <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
