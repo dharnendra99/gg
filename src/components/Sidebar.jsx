@@ -31,43 +31,43 @@ function Sidebar() {
         <div className="nav-section">
           <div className="nav-section-title">Main</div>
           <NavLink to="/dashboard" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📊</span> Dashboard
+            Dashboard
           </NavLink>
         </div>
 
         <div className="nav-section">
           <div className="nav-section-title">Inventory</div>
           <NavLink to="/products" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📦</span> Products
+            Products
           </NavLink>
           <NavLink to="/categories" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">🏷️</span> Categories
+            Categories
           </NavLink>
         </div>
 
         <div className="nav-section">
           <div className="nav-section-title">Operations</div>
           <NavLink to="/receipts" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📥</span> Receipts
+            Receipts
           </NavLink>
           <NavLink to="/deliveries" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📤</span> Delivery Orders
+            Delivery Orders
           </NavLink>
           <NavLink to="/transfers" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">🔄</span> Internal Transfers
+            Internal Transfers
           </NavLink>
           <NavLink to="/adjustments" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📋</span> Adjustments
+            Adjustments
           </NavLink>
           <NavLink to="/move-history" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">📜</span> Move History
+            Move History
           </NavLink>
         </div>
 
         <div className="nav-section">
           <div className="nav-section-title">Settings</div>
           <NavLink to="/warehouses" className={({isActive}) => `nav-link ${isActive ? 'active' : ''}`}>
-            <span className="icon">🏭</span> Warehouses
+            Warehouses
           </NavLink>
         </div>
       </nav>
@@ -81,7 +81,7 @@ function Sidebar() {
           </div>
         </div>
         <button className="logout-btn" onClick={handleLogout}>
-          <span className="icon">🚪</span> Logout
+          Logout
         </button>
       </div>
     </aside>
