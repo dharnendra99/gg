@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createDelivery, getDelivery, getProducts, getWarehouses, getLocations } from '../services/api';
+import { useAuth } from '../AuthContext';
 
 function DeliveryForm() {
   const navigate = useNavigate();
@@ -17,13 +18,13 @@ function DeliveryForm() {
   const [deliveryData, setDeliveryData] = useState(null);
 
   useEffect(() => {
-    getProducts({}).then(res => { if (res.data.success) setProducts(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
+    getProducts({}).then(res => { if (res.data) setProducts(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
 
     if (isEdit) {
       getDelivery(id).then(res => {
-        if (res.data.success) {
-          const d = res.data.data;
+        if (res.data) {
+          const d = res.data;
           setDeliveryData(d);
           setForm({ customer: d.customer, warehouse_id: d.warehouse_id, location_id: d.location_id, notes: d.notes || '' });
           if (d.warehouse_id) handleWarehouseChange(d.warehouse_id);
@@ -37,7 +38,7 @@ function DeliveryForm() {
     setForm(f => ({ ...f, warehouse_id: whId, location_id: '' }));
     if (whId) {
       const res = await getLocations(whId);
-      if (res.data.success) setLocations(res.data.data);
+      if (res.data) setLocations(res.data);
     } else { setLocations([]); }
   };
 
@@ -47,7 +48,7 @@ function DeliveryForm() {
     const updated = [...items]; updated[index][field] = value; setItems(updated);
   };
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +60,7 @@ function DeliveryForm() {
       await createDelivery({ ...form, items: validItems, created_by: user.id });
       navigate('/deliveries');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create delivery');
+      setError(err.message || 'Failed to create delivery');
     } finally { setLoading(false); }
   };
 

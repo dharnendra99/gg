@@ -17,7 +17,7 @@ function Warehouses() {
   const loadWarehouses = async () => {
     try {
       const res = await getWarehouses();
-      if (res.data.success) setWarehouses(res.data.data);
+      if (res.data) setWarehouses(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -46,7 +46,7 @@ function Warehouses() {
       setShowModal(false);
       loadWarehouses();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed');
+      setError(err.message || 'Failed');
     }
   };
 
@@ -59,7 +59,7 @@ function Warehouses() {
     setSelectedWarehouse(wh);
     try {
       const res = await getLocations(wh.id);
-      if (res.data.success) setWarehouseLocations(res.data.data);
+      if (res.data) setWarehouseLocations(res.data);
     } catch (err) {}
   };
 

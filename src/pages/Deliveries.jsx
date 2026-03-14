@@ -13,7 +13,7 @@ function Deliveries() {
   const loadDeliveries = async () => {
     try {
       const res = await getDeliveries({ status: statusFilter });
-      if (res.data.success) setDeliveries(res.data.data);
+      if (res.data) setDeliveries(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -23,7 +23,7 @@ function Deliveries() {
       await validateDelivery({ id: delivery.id });
       loadDeliveries();
     } catch (err) {
-      alert(err.response?.data?.error || 'Validation failed');
+      alert(err.message || 'Validation failed');
     }
   };
 

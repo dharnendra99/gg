@@ -18,13 +18,13 @@ function ProductForm() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    getCategories().then(res => { if (res.data.success) setCategories(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
+    getCategories().then(res => { if (res.data) setCategories(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
 
     if (isEdit) {
       getProduct(id).then(res => {
-        if (res.data.success) {
-          const p = res.data.data;
+        if (res.data) {
+          const p = res.data;
           setForm({ name: p.name, sku: p.sku, category_id: p.category_id || '', unit_of_measure: p.unit_of_measure, min_stock: p.min_stock, description: p.description || '', initial_stock: 0, location_id: '' });
         }
       }).catch(() => {});
@@ -34,7 +34,7 @@ function ProductForm() {
   const handleWarehouseChange = async (warehouseId) => {
     if (warehouseId) {
       const res = await getLocations(warehouseId);
-      if (res.data.success) setLocations(res.data.data);
+      if (res.data) setLocations(res.data);
     } else {
       setLocations([]);
     }

@@ -13,7 +13,7 @@ function Adjustments() {
   const loadAdjustments = async () => {
     try {
       const res = await getAdjustments({ status: statusFilter });
-      if (res.data.success) setAdjustments(res.data.data);
+      if (res.data) setAdjustments(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -23,7 +23,7 @@ function Adjustments() {
       await validateAdjustment({ id: adj.id });
       loadAdjustments();
     } catch (err) {
-      alert(err.response?.data?.error || 'Validation failed');
+      alert(err.message || 'Validation failed');
     }
   };
 

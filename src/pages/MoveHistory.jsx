@@ -10,9 +10,9 @@ function MoveHistory() {
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
-    getProducts({}).then(res => { if (res.data.success) setProducts(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
-    getLocations().then(res => { if (res.data.success) setLocations(res.data.data); }).catch(() => {});
+    getProducts({}).then(res => { if (res.data) setProducts(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
+    getLocations().then(res => { if (res.data) setLocations(res.data); }).catch(() => {});
   }, []);
 
   useEffect(() => { loadMoves(); }, [filters]);
@@ -20,7 +20,7 @@ function MoveHistory() {
   const loadMoves = async () => {
     try {
       const res = await getStockLedger(filters);
-      if (res.data.success) setMoves(res.data.data);
+      if (res.data) setMoves(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 

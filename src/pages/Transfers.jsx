@@ -13,7 +13,7 @@ function Transfers() {
   const loadTransfers = async () => {
     try {
       const res = await getTransfers({ status: statusFilter });
-      if (res.data.success) setTransfers(res.data.data);
+      if (res.data) setTransfers(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -23,7 +23,7 @@ function Transfers() {
       await validateTransfer({ id: transfer.id });
       loadTransfers();
     } catch (err) {
-      alert(err.response?.data?.error || 'Validation failed');
+      alert(err.message || 'Validation failed');
     }
   };
 

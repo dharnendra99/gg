@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createTransfer, getTransfer, getProducts, getWarehouses, getLocations } from '../services/api';
+import { useAuth } from '../AuthContext';
 
 function TransferForm() {
   const navigate = useNavigate();
@@ -18,13 +19,13 @@ function TransferForm() {
   const [transferData, setTransferData] = useState(null);
 
   useEffect(() => {
-    getProducts({}).then(res => { if (res.data.success) setProducts(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
+    getProducts({}).then(res => { if (res.data) setProducts(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
 
     if (isView) {
       getTransfer(id).then(res => {
-        if (res.data.success) {
-          const t = res.data.data;
+        if (res.data) {
+          const t = res.data;
           setTransferData(t);
           setItems(t.items.map(i => ({ product_id: i.product_id, quantity: i.quantity, product_name: i.product_name, sku: i.sku })));
         }
@@ -35,7 +36,7 @@ function TransferForm() {
   const loadLocations = async (whId, setter) => {
     if (whId) {
       const res = await getLocations(whId);
-      if (res.data.success) setter(res.data.data);
+      if (res.data) setter(res.data);
     } else { setter([]); }
   };
 
@@ -45,7 +46,7 @@ function TransferForm() {
     const updated = [...items]; updated[index][field] = value; setItems(updated);
   };
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,7 +58,7 @@ function TransferForm() {
       await createTransfer({ from_location_id: form.from_location_id, to_location_id: form.to_location_id, notes: form.notes, items: validItems, created_by: user.id });
       navigate('/transfers');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed');
+      setError(err.message || 'Failed');
     } finally { setLoading(false); }
   };
 

@@ -15,7 +15,7 @@ function Products() {
 
   useEffect(() => {
     loadProducts();
-    getCategories().then(res => { if (res.data.success) setCategories(res.data.data); }).catch(() => {});
+    getCategories().then(res => { if (res.data) setCategories(res.data); }).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ function Products() {
   const loadProducts = async () => {
     try {
       const res = await getProducts({ search, category: categoryFilter });
-      if (res.data.success) setProducts(res.data.data);
+      if (res.data) setProducts(res.data);
     } catch (err) {
       console.error('Failed to load products');
     } finally {
@@ -47,8 +47,8 @@ function Products() {
   const showStockByLocation = async (product) => {
     try {
       const res = await getStockByProduct(product.id);
-      if (res.data.success) {
-        setStockData(res.data.data);
+      if (res.data) {
+        setStockData(res.data);
         setStockModal(product);
       }
     } catch (err) {

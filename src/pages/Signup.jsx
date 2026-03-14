@@ -43,13 +43,13 @@ function Signup() {
     setLoading(true);
 
     try {
-      const res = await signup(form);
-      if (res.data.success) {
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        navigate('/dashboard');
-      }
+      await signup(form);
+      // Supabase signIn/signUp handles sessions slightly differently but
+      // for signup we'll just redirect them to login with a success param or directly log them in.
+      // Easiest path: direct them to login.
+      navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.error || 'Signup failed');
+      setError(err.message || 'Signup failed');
     } finally {
       setLoading(false);
     }

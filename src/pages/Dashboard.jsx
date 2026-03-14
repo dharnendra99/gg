@@ -19,9 +19,9 @@ function Dashboard() {
   const loadData = async () => {
     try {
       const res = await getDashboardKPIs();
-      if (res.data.success) setKpis(res.data.data);
+      if (res.data) setKpis(res.data);
     } catch (err) {
-      console.error('Failed to load KPIs');
+      console.error('Failed to load KPIs', err);
     }
     loadOperations();
   };
@@ -29,9 +29,9 @@ function Dashboard() {
   const loadOperations = async () => {
     try {
       const res = await getRecentOperations(filters);
-      if (res.data.success) setOperations(res.data.data);
+      if (res.data) setOperations(res.data);
     } catch (err) {
-      console.error('Failed to load operations');
+      console.error('Failed to load operations', err);
     } finally {
       setLoading(false);
     }

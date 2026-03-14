@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getProfile, updateProfile } from '../services/api';
+import { useAuth } from '../AuthContext';
 
 function Profile() {
   const [user, setUser] = useState(null);
@@ -9,18 +10,20 @@ function Profile() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user: authUser } = useAuth();
+  const storedUser = authUser || {};
 
   useEffect(() => {
     loadProfile();
-  }, []);
+  }, [authUser]);
 
   const loadProfile = async () => {
+    if (!storedUser?.id) return;
     try {
       const res = await getProfile(storedUser.id);
-      if (res.data.success) {
-        setUser(res.data.data);
-        setForm(f => ({ ...f, name: res.data.data.name, phone: res.data.data.phone || '' }));
+      if (res.data) {
+        setUser(res.data);
+        setForm(f => ({ ...f, name: res.data.name, phone: res.data.phone || '' }));
       }
     } catch (err) {} finally { setLoading(false); }
   };
@@ -45,14 +48,12 @@ function Profile() {
         payload.new_password = form.new_password;
       }
       const res = await updateProfile(payload);
-      if (res.data.success) {
+      if (res.data) {
         setMessage('Profile updated successfully');
-        const updated = { ...storedUser, name: form.name, phone: form.phone };
-        localStorage.setItem('user', JSON.stringify(updated));
         setForm(f => ({ ...f, current_password: '', new_password: '' }));
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to update profile');
+      setError(err.message || 'Failed to update profile');
     } finally { setSaving(false); }
   };
 

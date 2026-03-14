@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createReceipt, getReceipt, getProducts, getWarehouses, getLocations } from '../services/api';
+import { useAuth } from '../AuthContext';
 
 function ReceiptForm() {
   const navigate = useNavigate();
@@ -17,13 +18,13 @@ function ReceiptForm() {
   const [receiptData, setReceiptData] = useState(null);
 
   useEffect(() => {
-    getProducts({}).then(res => { if (res.data.success) setProducts(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
+    getProducts({}).then(res => { if (res.data) setProducts(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
 
     if (isEdit) {
       getReceipt(id).then(res => {
-        if (res.data.success) {
-          const r = res.data.data;
+        if (res.data) {
+          const r = res.data;
           setReceiptData(r);
           setForm({ supplier: r.supplier, warehouse_id: r.warehouse_id, location_id: r.location_id, notes: r.notes || '' });
           if (r.warehouse_id) handleWarehouseChange(r.warehouse_id);
@@ -37,7 +38,7 @@ function ReceiptForm() {
     setForm(f => ({ ...f, warehouse_id: whId, location_id: '' }));
     if (whId) {
       const res = await getLocations(whId);
-      if (res.data.success) setLocations(res.data.data);
+      if (res.data) setLocations(res.data);
     } else { setLocations([]); }
   };
 
@@ -49,7 +50,7 @@ function ReceiptForm() {
     setItems(updated);
   };
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +64,7 @@ function ReceiptForm() {
       await createReceipt({ ...form, items: validItems, created_by: user.id });
       navigate('/receipts');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create receipt');
+      setError(err.message || 'Failed to create receipt');
     } finally { setLoading(false); }
   };
 

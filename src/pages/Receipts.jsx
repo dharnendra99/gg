@@ -13,7 +13,7 @@ function Receipts() {
   const loadReceipts = async () => {
     try {
       const res = await getReceipts({ status: statusFilter });
-      if (res.data.success) setReceipts(res.data.data);
+      if (res.data) setReceipts(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -23,7 +23,7 @@ function Receipts() {
       await validateReceipt({ id: receipt.id });
       loadReceipts();
     } catch (err) {
-      alert(err.response?.data?.error || 'Validation failed');
+      alert(err.message || 'Validation failed');
     }
   };
 

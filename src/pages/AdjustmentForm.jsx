@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createAdjustment, getAdjustment, getProducts, getWarehouses, getLocations } from '../services/api';
+import { useAuth } from '../AuthContext';
 
 function AdjustmentForm() {
   const navigate = useNavigate();
@@ -17,12 +18,12 @@ function AdjustmentForm() {
   const [adjData, setAdjData] = useState(null);
 
   useEffect(() => {
-    getProducts({}).then(res => { if (res.data.success) setProducts(res.data.data); }).catch(() => {});
-    getWarehouses().then(res => { if (res.data.success) setWarehouses(res.data.data); }).catch(() => {});
+    getProducts({}).then(res => { if (res.data) setProducts(res.data); }).catch(() => {});
+    getWarehouses().then(res => { if (res.data) setWarehouses(res.data); }).catch(() => {});
 
     if (isView) {
       getAdjustment(id).then(res => {
-        if (res.data.success) setAdjData(res.data.data);
+        if (res.data) setAdjData(res.data);
       }).catch(() => {});
     }
   }, [id]);
@@ -31,7 +32,7 @@ function AdjustmentForm() {
     setForm(f => ({ ...f, warehouse_id: whId, location_id: '' }));
     if (whId) {
       const res = await getLocations(whId);
-      if (res.data.success) setLocations(res.data.data);
+      if (res.data) setLocations(res.data);
     } else { setLocations([]); }
   };
 
@@ -41,7 +42,7 @@ function AdjustmentForm() {
     const updated = [...items]; updated[index][field] = value; setItems(updated);
   };
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +54,7 @@ function AdjustmentForm() {
       await createAdjustment({ location_id: form.location_id, reason: form.reason, notes: form.notes, items: validItems, created_by: user.id });
       navigate('/adjustments');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed');
+      setError(err.message || 'Failed');
     } finally { setLoading(false); }
   };
 

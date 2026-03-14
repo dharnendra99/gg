@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDashboardKPIs } from '../services/api';
+import { getDashboardKPIs, logout } from '../services/api';
+import { useAuth } from '../AuthContext';
 import headerLogo from '../assets/header logo.png';
 import './Navbar.component.css';
 
@@ -8,13 +9,16 @@ function Navbar() {
   const [showAlerts, setShowAlerts] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [lowStockProducts, setLowStockProducts] = useState([]);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleSignOut = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleSignOut = async () => {
+    try {
+        await logout();
+        navigate('/login');
+    } catch (err) {
+        console.error("Failed to sign out", err);
+    }
   };
 
   const getInitials = (name) => {
@@ -25,8 +29,8 @@ function Navbar() {
   useEffect(() => {
     getDashboardKPIs()
       .then(res => {
-        if (res.data.success) {
-          setLowStockProducts(res.data.data.low_stock_products || []);
+        if (res.data) {
+          setLowStockProducts(res.data.low_stock_products || []);
         }
       })
       .catch(() => {});
@@ -73,18 +77,18 @@ function Navbar() {
 
         <div className="user" style={{ position: 'relative' }}>
           <button className="user-btn" onClick={() => setShowUserMenu(!showUserMenu)}>
-            <div className="avatar">{getInitials(user.name)}</div>
-            <span className="username">{user.name || 'User'}</span>
+            <div className="avatar">{getInitials(user?.name)}</div>
+            <span className="username">{user?.name || 'User'}</span>
             <span className="dropdown-arrow">▾</span>
           </button>
 
           {showUserMenu && (
             <div className="user-dropdown">
               <div className="user-dropdown-header">
-                <div className="avatar large">{getInitials(user.name)}</div>
+                <div className="avatar large">{getInitials(user?.name)}</div>
                 <div>
-                  <div className="dropdown-name">{user.name || 'User'}</div>
-                  <div className="dropdown-email">{user.email || ''}</div>
+                  <div className="dropdown-name">{user?.name || 'User'}</div>
+                  <div className="dropdown-email">{user?.email || ''}</div>
                 </div>
               </div>
               <div className="user-dropdown-divider"></div>

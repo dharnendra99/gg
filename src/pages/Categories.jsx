@@ -14,7 +14,7 @@ function Categories() {
   const loadCategories = async () => {
     try {
       const res = await getCategories();
-      if (res.data.success) setCategories(res.data.data);
+      if (res.data) setCategories(res.data);
     } catch (err) {} finally { setLoading(false); }
   };
 
@@ -41,7 +41,7 @@ function Categories() {
       setShowModal(false);
       loadCategories();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to save');
+      setError(err.message || 'Failed to save');
     }
   };
 

@@ -21,13 +21,14 @@ function Login() {
 
     try {
       const res = await login(form);
-      if (res.data.success) {
+      // login() now returns { data: { user, token } } directly or throws an error
+      if (res.data?.user) {
         localStorage.setItem('user', JSON.stringify(res.data.user));
         localStorage.setItem('token', res.data.token);
         navigate('/dashboard');
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -38,7 +39,7 @@ function Login() {
       <div className="auth-card">
         <div className="auth-logo">
           <img src={headerLogo} alt="CoreInventory" className="auth-logo-img" />
-          <h1>CoreInventory</h1>
+          <h1>MetroInventory</h1>
         </div>
 
         <h2 className="auth-title">Welcome Back</h2>
