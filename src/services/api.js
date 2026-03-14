@@ -37,7 +37,7 @@ export const login = async (data) => {
     .from('users')
     .select('*')
     .eq('id', authData.user.id)
-    .single();
+    .maybeSingle();
     
   if (profileError) throw profileError;
   
@@ -496,7 +496,7 @@ export const getRecentOperations = async (params = {}) => {
 
 // ======================= PROFILE =======================
 export const getProfile = async (id) => {
-  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).maybeSingle();
   if (error) throw error;
   return { data };
 };
